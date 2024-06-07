@@ -15,19 +15,19 @@ function Dashboard() {
   const [transactions, setTransactions] = useState([]);
   const [isExpenseModalVisible, setIsExpenseModalVisible] = useState(false);
   const [isIncomeModalVisible, setIsIncomeModalVisible] = useState(false);
-  const [loading,setLoading]=useState(false);
+  const [loading, setLoading] = useState(false);
+  const [income, setIncome] = useState(0);
+  const [expense, setExpense] = useState(0);
+  const [currentBalance, setCurrentBalance] = useState(0);
   const showExpenseModal = () => {
     setIsExpenseModalVisible(true);
   };
-
   const showIncomeModal = () => {
     setIsIncomeModalVisible(true);
   };
-
   const handleExpenseCancel = () => {
     setIsExpenseModalVisible(false);
   };
-
   const handleIncomeCancel = () => {
     setIsIncomeModalVisible(false);
   };
@@ -50,7 +50,11 @@ function Dashboard() {
       );
       console.log("Document written with ID: ", docRef.id);
 
-      toast.success("Transaction Added!");
+      // toast.success("Transaction Added!");
+      let newArr = transactions;
+      newArr.push(transaction);
+      setTransactions(newArr);
+      calculateBalance();
     } catch (e) {
       console.error("Error adding document: ", e);
 
@@ -60,7 +64,6 @@ function Dashboard() {
   useEffect(() => {
     fetchTransactions();
   }, []);
-
   async function fetchTransactions() {
     setLoading(true);
     if (user) {
@@ -72,30 +75,55 @@ function Dashboard() {
         transactionsArray.push(doc.data());
       });
       setTransactions(transactionsArray);
-      toast.success("Transactions Fetched!");
+      // toast.success("Transactions Fetched!");
     }
     setLoading(false);
   }
+  useEffect(() => {
+    calculateBalance();
+  }, [transactions]);
+  const calculateBalance = () => {
+    let incomeTotal = 0;
+    let expensesTotal = 0;
+
+    transactions.forEach((transaction) => {
+      if (transaction.type === "income") {
+        incomeTotal += transaction.amount;
+      } else {
+        expensesTotal += transaction.amount;
+      }
+    });
+
+    setIncome(incomeTotal);
+    setExpense(expensesTotal);
+    setCurrentBalance(incomeTotal - expensesTotal);
+  };
+
   return (
     <div>
       <Header />
-      {loading?(<p>Loading...</p>):(
-      <>
-        <Cards
-        showExpenseModal={showExpenseModal}
-        showIncomeModal={showIncomeModal}
-      />
-      <AddExpenseModal
-        isExpenseModalVisible={isExpenseModalVisible}
-        handleExpenseCancel={handleExpenseCancel}
-        onFinish={onFinish}
-      />
-      <AddIncomeModal
-        isIncomeModalVisible={isIncomeModalVisible}
-        handleIncomeCancel={handleIncomeCancel}
-        onFinish={onFinish}
-      />
-      </>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <>
+          <Cards
+            currentBalance={currentBalance}
+            income={income}
+            expense={expense}
+            showExpenseModal={showExpenseModal}
+            showIncomeModal={showIncomeModal}
+          />
+          <AddExpenseModal
+            isExpenseModalVisible={isExpenseModalVisible}
+            handleExpenseCancel={handleExpenseCancel}
+            onFinish={onFinish}
+          />
+          <AddIncomeModal
+            isIncomeModalVisible={isIncomeModalVisible}
+            handleIncomeCancel={handleIncomeCancel}
+            onFinish={onFinish}
+          />
+        </>
       )}
     </div>
   );
