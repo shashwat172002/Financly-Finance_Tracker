@@ -6,9 +6,10 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { auth, db, doc } from "../../firebase";
+import { auth, db, doc, setDoc } from "../../firebase";
 import { toast } from "react-toastify";
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
+import { getDoc } from "firebase/firestore";
 
 function SignupSigninComponent() {
   const [name, setName] = useState("");
@@ -33,7 +34,7 @@ function SignupSigninComponent() {
             setPassword("");
             setConfirmPassword("");
             createDoc(user);
-            navigate('/dashboard');
+            navigate("/dashboard");
             // ...
           })
           .catch((error) => {
@@ -60,9 +61,9 @@ function SignupSigninComponent() {
           // Signed in
           const user = userCredential.user;
           // ...
-          toast.success("User Logged In")
+          toast.success("User Logged In");
           setLoading(false);
-          navigate('/dashboard');
+          navigate("/dashboard");
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -77,15 +78,25 @@ function SignupSigninComponent() {
     }
   }
 
-  // async function createDoc(user) {
-  //   await setDoc(doc(db,"users",user.uid),{
-  //     name:displayName ? displayName:name,
-  //     email,
-  //     photoo
-  //   })
+  async function createDoc(user) {
+    if (!user) return;
+    const userRef = doc(db, "users", user.uid);
+    const userData = await getDoc(userRef);
 
-
-  // }
+    if (!userData.exists()) {
+      try {
+        await setDoc(doc(db, "users", user.uid), {
+          name: user.displayName ? user.displayName : name,
+          email:user.email,
+          createdAt:new Date(),
+        });
+        toast.success("doc created!");
+      } catch (e) {
+        toast.error(e.message);
+      }
+    }else
+    toast.error("Doc already exists");
+  }
 
   return (
     <>
