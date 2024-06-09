@@ -5,6 +5,8 @@ import Dashboard from "./pages/Dashboard";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+
+
 function App() {
   return (
     <>
@@ -13,6 +15,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Signup />} />
           <Route path="/dashboard" element={<Dashboard />} />
+        
         </Routes>
       </Router>
     </>

@@ -3,14 +3,12 @@ import "./styles.css"
 import { auth } from '../../firebase';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useNavigate } from 'react-router-dom';
+import HamburgerMenu from '../Hamburger/hamburger';
 
 function Header() {
   const [user, loading] = useAuthState(auth);
   const navigate = useNavigate();
-  function logoutFnc() {
-    auth.signOut();
-    navigate("/");
-  }
+  
 
   useEffect(() => {
     if (!user) {
@@ -25,9 +23,10 @@ function Header() {
       Financely.
     </p>
     {user && (
-      <p className='logo link' onClick={logoutFnc}>
-      Logout
-    </p>
+      <>
+      <HamburgerMenu />
+     
+    </>
     )}
     
     </div>

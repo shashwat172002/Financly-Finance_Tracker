@@ -1,0 +1,60 @@
+/* HamburgerMenu.css */
+.hamburger-menu {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    padding: 15px;
+}
+
+.hamburger-line {
+    width: 25px;
+    height: 2px;
+    background-color: var(--white);
+    margin: 3px 0;
+}
+
+.open .hamburger-line:nth-child(1) {
+    transform: translateY(10px) rotate(45deg);
+}
+
+.open .hamburger-line:nth-child(2) {
+    opacity: 0;
+}
+
+.open .hamburger-line:nth-child(3) {
+    transform: translateY(-10px) rotate(-45deg);
+}
+
+/* MenuItem.css */
+.menu-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-item p {
+    margin: 10px 0;
+    cursor: pointer;
+    color: var(--white);
+    text-decoration: none;
+}
+
+.menu-item p:hover {
+    color: blue;
+}
+
+.logo {
+    color: var(--white);
+    font-weight: 500;
+    font-size: 1.2rem;
+    margin: 0;
+  }
+
+  .link {
+    opacity: 0.8;
+    cursor: pointer;
+  }
+
+  .link:hover {
+    opacity: 1;
+    transition: all 0.3s;
+  }

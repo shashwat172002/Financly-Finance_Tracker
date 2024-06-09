@@ -1,7 +1,8 @@
-.navbar {
+ .navbar {
     background-color: var(--theme);
     padding: 1rem 1.5rem;
-    position: sticky;
+    width: 96%;
+    /* position: sticky; */
     top: 0;
     left: 0;
     display: flex;
@@ -42,4 +43,10 @@
     cursor: pointer;
   }
   
+/* For phones */
+ @media (max-width: 767px) {
+  .navbar {
+    width: 100%;
+  }
+} 
   

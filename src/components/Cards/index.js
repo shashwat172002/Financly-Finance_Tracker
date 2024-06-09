@@ -12,7 +12,15 @@ function Cards({
 }) {
   return (
     <div>
-      <Row className="my-row">
+      <Row
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: "16px",
+          justifyContent: "space-between",
+        }}
+        
+      >
         <Card bordered={true} className="my-card">
           <h2>Total Income</h2>
           <p>₹{income}</p>

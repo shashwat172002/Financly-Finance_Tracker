@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Header from "../components/Header";
 import Cards from "../components/Cards";
-import { Modal } from "antd";
+import { Modal, Radio } from "antd";
 import AddIncomeModal from "../components/Modals/addIncome";
 import AddExpenseModal from "../components/Modals/addExpense";
 import { addDoc, collection, getDocs, query } from "firebase/firestore";
@@ -9,6 +9,10 @@ import { auth, db } from "../firebase";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { useAuthState } from "react-firebase-hooks/auth";
+import TransactionsTable from "../components/TransactionTable";
+import ChartComponent from "../components/Charts";
+import { useNavigate } from "react-router-dom";
+import NoTransactions from "../components/NoTransactions";
 
 function Dashboard() {
   const [user] = useAuthState(auth);
@@ -19,6 +23,7 @@ function Dashboard() {
   const [income, setIncome] = useState(0);
   const [expense, setExpense] = useState(0);
   const [currentBalance, setCurrentBalance] = useState(0);
+
   const showExpenseModal = () => {
     setIsExpenseModalVisible(true);
   };
@@ -34,7 +39,7 @@ function Dashboard() {
   const onFinish = (values, type) => {
     const newTransaction = {
       type: type,
-      date: moment(values.date).format("YYYY-MM-DD"),
+      date: values.date.format("YYYY-MM-DD"),
       amount: parseFloat(values.amount),
       tag: values.tag,
       name: values.name,
@@ -99,6 +104,10 @@ function Dashboard() {
     setCurrentBalance(incomeTotal - expensesTotal);
   };
 
+  let sortedTransaction = transactions.sort((a, b) => {
+    return new Date(a.date) - new Date(b.date);
+  });
+
   return (
     <div>
       <Header />
@@ -113,6 +122,12 @@ function Dashboard() {
             showExpenseModal={showExpenseModal}
             showIncomeModal={showIncomeModal}
           />
+           {transactions.length != 0 ? (
+            <ChartComponent sortedTransaction={sortedTransaction}  />
+          ) : (
+            <NoTransactions />
+          )} 
+
           <AddExpenseModal
             isExpenseModalVisible={isExpenseModalVisible}
             handleExpenseCancel={handleExpenseCancel}
@@ -125,6 +140,12 @@ function Dashboard() {
           />
         </>
       )}
+
+      <TransactionsTable
+        transactions={transactions}
+        addTransaction={addTransaction}
+        fetchTransactions={fetchTransactions}
+      />
     </div>
   );
 }
