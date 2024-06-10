@@ -10,15 +10,7 @@ function ChartComponent({ sortedTransaction }) {
       return { tag: transaction.tag, amount: transaction.amount };
     }
   });
-  //   let finalSpendings=spendingData.reduce((acc,obj)=> {
-  //     let key=obj.tag;
-  //     if(!acc[key]) {
-  //         acc[key]={tag:obj.tag,amount:obj.amount};
-  //     }else {
-  //         acc[key].amount+=obj.amount;
-  //     }
-  //     return acc;
-  //   },{})
+ 
   let newSpendings = [
     { tag: "food", amount: 0 },
     { tag: "education", amount: 0 },

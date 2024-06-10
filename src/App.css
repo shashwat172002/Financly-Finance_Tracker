@@ -3,11 +3,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100vw;
+    width: 93%;
     height: 90vh;
   }
   .chart-wrapper {
-    width: 93%;
+    width: 90%;
     justify-content: space-between;
     height: auto;
     padding: 2rem;
