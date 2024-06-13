@@ -9,6 +9,7 @@ function Cards({
   currentBalance,
   showExpenseModal,
   showIncomeModal,
+  deleteAllTransactions,
 }) {
   return (
     <div>
@@ -34,7 +35,7 @@ function Cards({
         <Card bordered={true} className="my-card">
           <h2>Current Balance</h2>
           <p>₹{currentBalance}</p>
-          <Button text="Reset Balance" blue={true} />
+          <Button text="Reset Balance" blue={true} onClick={deleteAllTransactions} />
         </Card>
       </Row>
     </div>

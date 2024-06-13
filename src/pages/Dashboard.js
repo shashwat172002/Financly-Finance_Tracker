@@ -4,10 +4,16 @@ import Cards from "../components/Cards";
 import { Modal, Radio } from "antd";
 import AddIncomeModal from "../components/Modals/addIncome";
 import AddExpenseModal from "../components/Modals/addExpense";
-import { addDoc, collection, getDocs, query } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+} from "firebase/firestore";
 import { auth, db } from "../firebase";
 import { toast } from "react-toastify";
-import moment from "moment";
 import { useAuthState } from "react-firebase-hooks/auth";
 import TransactionsTable from "../components/TransactionTable";
 import ChartComponent from "../components/Charts";
@@ -23,7 +29,6 @@ function Dashboard() {
   const [income, setIncome] = useState(0);
   const [expense, setExpense] = useState(0);
   const [currentBalance, setCurrentBalance] = useState(0);
-
   const showExpenseModal = () => {
     setIsExpenseModalVisible(true);
   };
@@ -103,16 +108,40 @@ function Dashboard() {
     setExpense(expensesTotal);
     setCurrentBalance(incomeTotal - expensesTotal);
   };
-
   let sortedTransaction = transactions.sort((a, b) => {
     return new Date(a.date) - new Date(b.date);
   });
+  async function deleteAllTransactions() {
+    try {
+      const querySnapshot = await getDocs(
+        collection(db, `users/${user.uid}/transactions`)
+      );
 
+      const deletePromises = querySnapshot.docs.map((document) =>
+        deleteDoc(doc(db, `users/${user.uid}/transactions`, document.id))
+      );
+
+      await Promise.all(deletePromises);
+
+      console.log("All transactions deleted successfully");
+
+      // Clear local state and recalculate balance
+      setTransactions([]);
+      calculateBalance();
+      fetchTransactions();
+
+      // toast.success("All transactions deleted successfully!");
+    } catch (e) {
+      console.error("Error deleting transactions: ", e);
+
+      toast.error("Couldn't delete transactions");
+    }
+  }
   return (
     <div>
       <Header />
       {loading ? (
-        <p>Loading...</p>
+        <h1 style={{ textAlign: "center" }}>Loading...</h1>
       ) : (
         <>
           <Cards
@@ -121,13 +150,8 @@ function Dashboard() {
             expense={expense}
             showExpenseModal={showExpenseModal}
             showIncomeModal={showIncomeModal}
+            deleteAllTransactions={deleteAllTransactions}
           />
-           {transactions.length != 0 ? (
-            <ChartComponent sortedTransaction={sortedTransaction}  />
-          ) : (
-            <NoTransactions />
-          )} 
-
           <AddExpenseModal
             isExpenseModalVisible={isExpenseModalVisible}
             handleExpenseCancel={handleExpenseCancel}
@@ -138,14 +162,19 @@ function Dashboard() {
             handleIncomeCancel={handleIncomeCancel}
             onFinish={onFinish}
           />
+          {transactions.length != 0 ? (
+            <ChartComponent sortedTransaction={sortedTransaction} />
+          ) : (
+            <NoTransactions />
+          )}
+
+          <TransactionsTable
+            transactions={transactions}
+            addTransaction={addTransaction}
+            fetchTransactions={fetchTransactions}
+          />
         </>
       )}
-
-      <TransactionsTable
-        transactions={transactions}
-        addTransaction={addTransaction}
-        fetchTransactions={fetchTransactions}
-      />
     </div>
   );
 }

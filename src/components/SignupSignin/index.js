@@ -87,15 +87,14 @@ function SignupSigninComponent() {
       try {
         await setDoc(doc(db, "users", user.uid), {
           name: user.displayName ? user.displayName : name,
-          email:user.email,
-          createdAt:new Date(),
+          email: user.email,
+          createdAt: new Date(),
         });
         toast.success("doc created!");
       } catch (e) {
         toast.error(e.message);
       }
-    }else
-    toast.error("Doc already exists");
+    } else toast.error("Doc already exists");
   }
 
   return (

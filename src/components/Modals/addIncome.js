@@ -11,6 +11,7 @@ import {
   Select,
 } from "antd";
 
+
 function AddIncomeModal({
   isIncomeModalVisible,
   handleIncomeCancel,
@@ -29,6 +30,7 @@ function AddIncomeModal({
         form={form}
         layout="vertical"
         onFinish={(values) => {
+          handleIncomeCancel();
           onFinish(values, "income");
           form.resetFields();
         }}

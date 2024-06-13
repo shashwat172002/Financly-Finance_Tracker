@@ -10,6 +10,7 @@ import {
   DatePicker,
   Select,
 } from "antd";
+
 function AddExpenseModal({
   isExpenseModalVisible,
   handleExpenseCancel,
@@ -28,6 +29,7 @@ function AddExpenseModal({
         form={form}
         layout="vertical"
         onFinish={(values) => {
+          handleExpenseCancel();
           onFinish(values, "expense");
           form.resetFields();
         }}
