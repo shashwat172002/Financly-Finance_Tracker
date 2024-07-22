@@ -90,7 +90,7 @@ function SignupSigninComponent() {
           email: user.email,
           createdAt: new Date(),
         });
-        toast.success("doc created!");
+        toast.success("Doc created!");
       } catch (e) {
         toast.error(e.message);
       }
@@ -120,11 +120,10 @@ function SignupSigninComponent() {
               placeholder={"Example123"}
             />
           </form>
-
           <Button
             disabled={loading}
             text={loading ? " Loading..." : "Login"}
-            onClick={login}
+            onClick={login} 
           />
           <p className="p-login" onClick={() => setLoginForm(!loginForm)}>
             Don't have an account? Click here

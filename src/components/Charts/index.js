@@ -1,7 +1,9 @@
 import React from "react";
 import { Line, Pie } from "@ant-design/charts";
+import { useSelector } from "react-redux";
 
 function ChartComponent({ sortedTransaction }) {
+  const { theme } = useSelector((state) => state.theme);
   const data = sortedTransaction.map((item) => {
     return { date: item.date, amount: item.amount };
   });
@@ -43,7 +45,7 @@ function ChartComponent({ sortedTransaction }) {
   let chart;
   let pieChart;
   return (
-    <div className="chart-wrapper">
+    <div className={`chart-wrapper `}>
       <div>
         <h2>Your Analytics</h2>
         <Line

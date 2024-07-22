@@ -26,21 +26,17 @@ function Dashboard() {
   const [isExpenseModalVisible, setIsExpenseModalVisible] = useState(false);
   const [isIncomeModalVisible, setIsIncomeModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [income, setIncome] = useState(0);
+  const [income, setIncome] = useState(110);
   const [expense, setExpense] = useState(0);
   const [currentBalance, setCurrentBalance] = useState(0);
-  const showExpenseModal = () => {
-    setIsExpenseModalVisible(true);
-  };
-  const showIncomeModal = () => {
-    setIsIncomeModalVisible(true);
-  };
-  const handleExpenseCancel = () => {
-    setIsExpenseModalVisible(false);
-  };
-  const handleIncomeCancel = () => {
-    setIsIncomeModalVisible(false);
-  };
+
+  useEffect(() => {
+    fetchTransactions();
+  }, []);
+  useEffect(() => {
+    calculateBalance();
+  }, [transactions]);
+
   const onFinish = (values, type) => {
     const newTransaction = {
       type: type,
@@ -52,14 +48,14 @@ function Dashboard() {
 
     addTransaction(newTransaction);
   };
+
   async function addTransaction(transaction) {
     try {
       const docRef = await addDoc(
         collection(db, `users/${user.uid}/transactions`),
         transaction
       );
-      console.log("Document written with ID: ", docRef.id);
-
+      // console.log("Document written with ID: ", docRef.id);
       // toast.success("Transaction Added!");
       let newArr = transactions;
       newArr.push(transaction);
@@ -71,27 +67,7 @@ function Dashboard() {
       toast.error("Couldn't add transaction");
     }
   }
-  useEffect(() => {
-    fetchTransactions();
-  }, []);
-  async function fetchTransactions() {
-    setLoading(true);
-    if (user) {
-      const q = query(collection(db, `users/${user.uid}/transactions`));
-      const querySnapshot = await getDocs(q);
-      let transactionsArray = [];
-      querySnapshot.forEach((doc) => {
-        // doc.data() is never undefined for query doc snapshots
-        transactionsArray.push(doc.data());
-      });
-      setTransactions(transactionsArray);
-      // toast.success("Transactions Fetched!");
-    }
-    setLoading(false);
-  }
-  useEffect(() => {
-    calculateBalance();
-  }, [transactions]);
+
   const calculateBalance = () => {
     let incomeTotal = 0;
     let expensesTotal = 0;
@@ -108,6 +84,35 @@ function Dashboard() {
     setExpense(expensesTotal);
     setCurrentBalance(incomeTotal - expensesTotal);
   };
+
+  async function fetchTransactions() {
+    setLoading(true);
+    if (user) {
+      const q = query(collection(db, `users/${user.uid}/transactions`));
+      const querySnapshot = await getDocs(q);
+      let transactionsArray = [];
+      querySnapshot.forEach((doc) => {
+        // doc.data() is never undefined for query doc snapshots
+        transactionsArray.push(doc.data());
+      });
+      setTransactions(transactionsArray);
+      // toast.success("Transactions Fetched!");
+    }
+    setLoading(false);
+  }
+
+  const showExpenseModal = () => {
+    setIsExpenseModalVisible(true);
+  };
+  const showIncomeModal = () => {
+    setIsIncomeModalVisible(true);
+  };
+  const handleExpenseCancel = () => {
+    setIsExpenseModalVisible(false);
+  };
+  const handleIncomeCancel = () => {
+    setIsIncomeModalVisible(false);
+  };
   let sortedTransaction = transactions.sort((a, b) => {
     return new Date(a.date) - new Date(b.date);
   });
@@ -123,7 +128,7 @@ function Dashboard() {
 
       await Promise.all(deletePromises);
 
-      console.log("All transactions deleted successfully");
+      toast.success("All transactions deleted successfully");
 
       // Clear local state and recalculate balance
       setTransactions([]);

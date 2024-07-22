@@ -17,3 +17,5 @@ function Input({ label, state, setState, placeholder,type}) {
 }
 
 export default Input;
+
+

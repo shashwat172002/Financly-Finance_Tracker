@@ -4,11 +4,13 @@ import React, { useState } from "react";
 import searchImg from "../../assets/search.svg";
 import { parse, unparse } from "papaparse";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
 
 function TransactionsTable({ transactions,addTransaction,fetchTransactions }) {
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
   const [sortKey, setSortKey] = useState("");
+  const { theme } = useSelector((state) => state.theme);
   const columns = [
     {
       title: "Name",
@@ -38,19 +40,17 @@ function TransactionsTable({ transactions,addTransaction,fetchTransactions }) {
   ];
   let filteredTransactions = transactions.filter(
     (item) =>
-      item.name.toLowerCase().includes(search.toLowerCase()) &&
-      item.type.includes(typeFilter)
+      item.name.toLowerCase().includes(search.toLowerCase()) && item.type.includes(typeFilter)
   );
   const sortedTransactions = [...filteredTransactions].sort((a, b) => {
     if (sortKey === "date") {
       return new Date(a.date) - new Date(b.date);
     } else if (sortKey === "amount") {
       return a.amount - b.amount;
-    } else {
+    } else {  
       return 0;
     }
   });
-
   const dataSource = sortedTransactions.map((transaction, index) => ({
     key: index,
     ...transaction,
@@ -98,7 +98,7 @@ function TransactionsTable({ transactions,addTransaction,fetchTransactions }) {
 
   return (
     
-    <div
+    <div 
       style={{
         width: "95%",
         padding: "0rem 2rem",
@@ -106,6 +106,7 @@ function TransactionsTable({ transactions,addTransaction,fetchTransactions }) {
     >
      
       <div
+
         style={{
           display: "flex",
           justifyContent: "space-between",
@@ -113,8 +114,9 @@ function TransactionsTable({ transactions,addTransaction,fetchTransactions }) {
           alignItems: "center",
           marginBottom: "1rem",
         }}
+        
       >
-        <div className="input-flex">
+        <div className={`input-flex ${theme}`}>
           <img src={searchImg} width="16" />
           <input
             value={search}
@@ -156,6 +158,7 @@ function TransactionsTable({ transactions,addTransaction,fetchTransactions }) {
             <Radio.Button value="">No Sort</Radio.Button>
             <Radio.Button value="date">Sort by Date</Radio.Button>
             <Radio.Button value="amount">Sort by Amount</Radio.Button>
+           
           </Radio.Group>
 
           <div
@@ -175,7 +178,6 @@ function TransactionsTable({ transactions,addTransaction,fetchTransactions }) {
               id="file-csv"
               type="file"
               accept=".csv"
-              
               required
               style={{ display: "none" }}
             />
